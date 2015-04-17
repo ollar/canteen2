@@ -26,7 +26,7 @@ class User(Base, flask_login.UserMixin):
     def __init__(self, username, password, real_name="", timestamp_modified=""):
         self.real_name = real_name
         self.username = username
-        self.password = generate_password_hash(password)
+        self.password = generate_password_hash(str(password).encode())
         self.timestamp_modified = timestamp_modified
 
     def __repr__(self):
