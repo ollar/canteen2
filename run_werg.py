@@ -1,5 +1,4 @@
 from main.main import app
-# from main.main import database_exist_check
 
 # --------------------------------------------------------------------
 # -------------------------------------------------- Application Start
