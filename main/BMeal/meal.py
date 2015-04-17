@@ -1,0 +1,74 @@
+from flask import Blueprint, jsonify, request, abort, make_response
+from flask.views import MethodView
+from sqlalchemy.exc import IntegrityError
+from main.database import db_session, Meal
+import datetime
+import json
+
+bp_meal = Blueprint('bp_meal', __name__, url_prefix='/meal')
+
+class MealAPI(MethodView):
+    def __init__(self):
+        self.json = request.json
+
+    def _parse_meal(self, meal_obj):
+        meal = {
+            'id': meal_obj.id,
+            'title': meal_obj.title,
+            'description': meal_obj.description,
+            'category': meal_obj.category,
+            'day_linked': meal_obj.day_linked,
+            'enabled': meal_obj.enabled,
+            'timestamp_created': meal_obj.timestamp_created,
+            'timestamp_modified': meal_obj.timestamp_modified
+        }
+
+        return meal
+
+    def get(self, meal_id):
+        if meal_id:
+            meal = db_session.query(Meal).get(meal_id)
+            if meal:
+                return jsonify(self._parse_meal(meal))
+            else:
+                return make_response(jsonify({'error': 'not found'}), 404)
+
+        meals = db_session.query(Meal).all()
+        meals[:] = [self._parse_meal(meal) for meal in meals]
+        return jsonify({'meals': meals})
+    #
+    def post(self):
+        new_meal = Meal(title=self.json.get('title'),
+                        description=self.json.get('description'),
+                        category=self.json.get('category'),
+                        day_linked=self.json.get('day_linked'),
+                        enabled=self.json.get('enabled'),
+                        timestamp_modified=datetime.datetime.utcnow())
+
+        db_session.add(new_meal)
+        db_session.commit()
+
+        return jsonify(self._parse_meal(new_meal))
+
+    def put(self, meal_id):
+        json_dict = self.json
+
+        json_dict.update({'timestamp_modified': datetime.datetime.utcnow()})
+
+        db_session.query(Meal).filter_by(id=meal_id).update(json_dict)
+        db_session.commit()
+
+        return make_response(jsonify({'status':'ok'}), 200)
+
+    def delete(self, meal_id):
+        meal = db_session.query(Meal).get(meal_id)
+        if meal:
+            db_session.delete(meal)
+            db_session.commit()
+            return jsonify({'status': 'ok'})
+        return make_response(jsonify({'error': 'not found'}), 404)
+
+meal_api = MealAPI.as_view('index')
+bp_meal.add_url_rule('/', view_func=meal_api, defaults={'meal_id': None}, methods=['GET'])
+bp_meal.add_url_rule('/', view_func=meal_api, methods=['POST'])
+bp_meal.add_url_rule('/<int:meal_id>', view_func=meal_api, methods=['GET', 'PUT', 'DELETE'])

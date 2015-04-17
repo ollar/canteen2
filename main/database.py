@@ -67,12 +67,13 @@ class Meal(Base):
     timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
-    def __init__(self, title, description, category, day_linked, *args, **kwargs):
+    def __init__(self, title, description, category, day_linked, enabled=1, timestamp_modified="", *args, **kwargs):
         self.title = title
         self.description = description
         self.category = category
         self.day_linked = day_linked
         self.enabled = enabled
+        self.timestamp_modified = timestamp_modified
 
     def __repr__(self):
         return '<Meals {0}>'.format(self.title)

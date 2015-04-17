@@ -14,6 +14,7 @@ class UserAPI(MethodView):
 
     def _parse_user(self, user_obj):
         user = {
+            'id': user_obj.id,
             'real_name': user_obj.real_name,
             'username': user_obj.username,
             'password': user_obj.password,
@@ -47,7 +48,7 @@ class UserAPI(MethodView):
         except IntegrityError as e:
             return make_response(jsonify({'error': 'username not unique'}), 500)
 
-        return make_response(jsonify({'status':'ok'}), 200)
+        return jsonify(self._parse_user(new_user))
 
     def put(self, user_id):
         json_dict = self.json
@@ -66,9 +67,9 @@ class UserAPI(MethodView):
         user = db_session.query(User).get(user_id)
         if user:
             db_session.delete(user)
-
             db_session.commit()
-        return jsonify({'page':'user', 'method': request.method})
+            return jsonify({'status': 'ok'})
+        return make_response(jsonify({'error': 'not found'}), 404)
 
 user_api = UserAPI.as_view('index')
 bp_user.add_url_rule('/', view_func=user_api, defaults={'user_id': None}, methods=['GET'])
