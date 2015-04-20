@@ -51,9 +51,11 @@ class UserAPI(MethodView):
         return jsonify(self._parse_user(new_user))
 
     def put(self, user_id):
-        json_dict = self.json
-
-        json_dict.update({'timestamp_modified': datetime.datetime.utcnow()})
+        json_dict = {
+            'username': self.json.get('username'),
+            'real_name': self.json.get('real_name'),
+            'timestamp_modified': datetime.datetime.utcnow()
+        }
 
         if json_dict.get('password'):
             json_dict.update({'password': generate_password_hash(str(json_dict.get('password')).encode())})

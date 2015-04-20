@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask.views import MethodView
-
+from flask.ext.cors import CORS
 import datetime
 import sys
 
@@ -9,6 +9,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '-d':
     DEBUG = True
 
 app = Flask(__name__)
+cors = CORS(app)
 
 # ==============================================================================
 # ==================================================================== ##Configs
