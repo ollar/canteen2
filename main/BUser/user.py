@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session, User
 from werkzeug import generate_password_hash, check_password_hash
 import datetime
@@ -40,7 +40,10 @@ class UserAPI(MethodView):
         assert self.json.get('username'), 'username is required'
         assert self.json.get('password'), 'password is required'
 
-        new_user = User(real_name=self.json.get('real_name'), username=self.json.get('username'), password=self.json.get('password'), timestamp_modified=datetime.datetime.utcnow())
+        new_user = User(real_name=self.json.get('real_name'),
+                        username=self.json.get('username'),
+                        password=self.json.get('password'),
+                        timestamp_modified=datetime.datetime.utcnow())
 
         db_session.add(new_user)
         try:
@@ -51,17 +54,23 @@ class UserAPI(MethodView):
         return jsonify(self._parse_user(new_user))
 
     def put(self, user_id):
+        json_dict = self.json
+
         json_dict = {
-            'username': self.json.get('username'),
             'real_name': self.json.get('real_name'),
-            'timestamp_modified': datetime.datetime.utcnow()
+            'username': self.json.get('username')
         }
 
         if json_dict.get('password'):
             json_dict.update({'password': generate_password_hash(str(json_dict.get('password')).encode())})
 
-        db_session.query(User).filter_by(id=user_id).update(json_dict)
-        db_session.commit()
+        json_dict['timestamp_modified'] = 'asdfasd'
+
+        try:
+            db_session.query(User).filter_by(id=user_id).update(json_dict)
+            db_session.commit()
+        except StatementError:
+            return make_response(jsonify({'error': 'database error'}), 500)
 
         return make_response(jsonify({'status':'ok'}), 200)
 
