@@ -17,7 +17,7 @@ class UserAPI(MethodView):
             'id': user_obj.id,
             'real_name': user_obj.real_name,
             'username': user_obj.username,
-            'password': user_obj.password,
+            # 'password': user_obj.password,
             'timestamp_created': str(user_obj.timestamp_created),
             'timestamp_modified': str(user_obj.timestamp_modified)
         }
