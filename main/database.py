@@ -46,11 +46,12 @@ class Order(Base):
     # user = relationship('User')
     # meal = relationship('Meal')
 
-    def __init__(self, order_date, meal_id, user_id, quantity):
+    def __init__(self, order_date, meal_id, user_id, quantity, timestamp_modified):
         self.user_id = user_id
         self.order_date = order_date
         self.meal_id = meal_id
         self.quantity = quantity
+        self.timestamp_modified = timestamp_modified
 
     def __repr__(self):
         return '<Order: {0} by {1}>'.format(self.date, self.user_id)

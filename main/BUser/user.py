@@ -66,20 +66,21 @@ class UserAPI(MethodView):
 
         json_dict['timestamp_modified'] = 'asdfasd'
 
+        update_user = db_session.query(User).filter_by(id=user_id)
         try:
-            db_session.query(User).filter_by(id=user_id).update(json_dict)
+            update.update(json_dict)
             db_session.commit()
         except StatementError:
             return make_response(jsonify({'error': 'database error'}), 500)
 
-        return make_response(jsonify({'status':'ok'}), 200)
+        return make_response(jsonify(self._parse_user(update_user.first())), 200)
 
     def delete(self, user_id):
         user = db_session.query(User).get(user_id)
         if user:
             db_session.delete(user)
             db_session.commit()
-            return jsonify({'status': 'ok'})
+            return jsonify(self._parse_user(user))
         return make_response(jsonify({'error': 'not found'}), 404)
 
 user_api = UserAPI.as_view('index')

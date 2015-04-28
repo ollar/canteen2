@@ -51,21 +51,29 @@ class MealAPI(MethodView):
         return jsonify(self._parse_meal(new_meal))
 
     def put(self, meal_id):
-        json_dict = self.json
+        json_dict = {
+            'title': self.json.get('title'),
+            'description': self.json.get('description'),
+            'category': self.json.get('category'),
+            'day_linked': self.json.get('day_linked'),
+            'enabled': self.json.get('enabled')
+        }
 
         json_dict.update({'timestamp_modified': datetime.datetime.utcnow()})
 
-        db_session.query(Meal).filter_by(id=meal_id).update(json_dict)
+        update_meal = db_session.query(Meal).filter_by(id=meal_id)
+        update_meal.update(json_dict)
+
         db_session.commit()
 
-        return make_response(jsonify({'status':'ok'}), 200)
+        return jsonify(self._parse_meal(update_meal.first()))
 
     def delete(self, meal_id):
         meal = db_session.query(Meal).get(meal_id)
         if meal:
             db_session.delete(meal)
             db_session.commit()
-            return jsonify({'status': 'ok'})
+            return jsonify(self._parse_meal(meal))
         return make_response(jsonify({'error': 'not found'}), 404)
 
 meal_api = MealAPI.as_view('index')
