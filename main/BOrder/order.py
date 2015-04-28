@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session, Order
+from main.functions import register_api
 import datetime
 import json
 
@@ -36,13 +37,11 @@ class Order_API(MethodView):
         return jsonify({'orders': orders})
 
     def post(self):
-        new_order = Order(
-                        # order_date=self.json.get('order_date'),
-                        order_date=datetime.datetime.utcnow(),
+        print(self.json)
+        new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
                         meal_id=self.json.get('meal_id'),
                         user_id=self.json.get('user_id'),
-                        quantity=self.json.get('quantity'),
-                        timestamp_modified=datetime.datetime.utcnow())
+                        quantity=self.json.get('quantity'))
 
         db_session.add(new_order)
         db_session.commit()
@@ -60,7 +59,4 @@ class Order_API(MethodView):
             return jsonify(self._parse_order(order))
         return make_response(jsonify({'error': 'not found'}), 404)
 
-order_api = Order_API.as_view('index')
-bp_order.add_url_rule('/', view_func=order_api, defaults={'order_id': None}, methods=['GET'])
-bp_order.add_url_rule('/', view_func=order_api, methods=['POST'])
-bp_order.add_url_rule('/<int:order_id>', view_func=order_api, methods=['GET', 'PUT', 'DELETE'])
+register_api(Order_API, 'order_api', '/order/', pk='order_id')

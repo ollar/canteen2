@@ -3,6 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session, User
 from werkzeug import generate_password_hash, check_password_hash
+from main.functions import register_api
 import datetime
 import json
 
@@ -83,7 +84,4 @@ class UserAPI(MethodView):
             return jsonify(self._parse_user(user))
         return make_response(jsonify({'error': 'not found'}), 404)
 
-user_api = UserAPI.as_view('index')
-bp_user.add_url_rule('/', view_func=user_api, defaults={'user_id': None}, methods=['GET'])
-bp_user.add_url_rule('/', view_func=user_api, methods=['POST'])
-bp_user.add_url_rule('/<int:user_id>', view_func=user_api, methods=['GET', 'PUT', 'DELETE'])
+register_api(UserAPI, 'user_api', '/user/', pk='user_id')

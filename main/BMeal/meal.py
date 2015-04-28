@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session, Meal
+from main.functions import register_api
 import datetime
 import json
 
@@ -76,7 +77,4 @@ class MealAPI(MethodView):
             return jsonify(self._parse_meal(meal))
         return make_response(jsonify({'error': 'not found'}), 404)
 
-meal_api = MealAPI.as_view('index')
-bp_meal.add_url_rule('/', view_func=meal_api, defaults={'meal_id': None}, methods=['GET'])
-bp_meal.add_url_rule('/', view_func=meal_api, methods=['POST'])
-bp_meal.add_url_rule('/<int:meal_id>', view_func=meal_api, methods=['GET', 'PUT', 'DELETE'])
+register_api(MealAPI, 'meal_api', '/meal/', pk='meal_id')
