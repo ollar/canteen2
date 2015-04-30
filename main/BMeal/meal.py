@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session, Meal
-from main.functions import register_api
+from main.functions import register_api, _parse_meal
 import datetime
 import json
 
@@ -12,30 +12,16 @@ class MealAPI(MethodView):
     def __init__(self):
         self.json = request.json
 
-    def _parse_meal(self, meal_obj):
-        meal = {
-            'id': meal_obj.id,
-            'title': meal_obj.title,
-            'description': meal_obj.description,
-            'category': meal_obj.category,
-            'day_linked': meal_obj.day_linked,
-            'enabled': meal_obj.enabled,
-            'timestamp_created': meal_obj.timestamp_created,
-            'timestamp_modified': meal_obj.timestamp_modified
-        }
-
-        return meal
-
     def get(self, meal_id):
         if meal_id:
             meal = db_session.query(Meal).get(meal_id)
             if meal:
-                return jsonify(self._parse_meal(meal))
+                return jsonify(_parse_meal(meal))
             else:
                 return make_response(jsonify({'error': 'not found'}), 404)
 
         meals = db_session.query(Meal).all()
-        meals[:] = [self._parse_meal(meal) for meal in meals]
+        meals[:] = [_parse_meal(meal) for meal in meals]
         return jsonify({'meals': meals})
     #
     def post(self):
@@ -49,7 +35,7 @@ class MealAPI(MethodView):
         db_session.add(new_meal)
         db_session.commit()
 
-        return jsonify(self._parse_meal(new_meal))
+        return jsonify(_parse_meal(new_meal))
 
     def put(self, meal_id):
         json_dict = {
@@ -67,14 +53,14 @@ class MealAPI(MethodView):
 
         db_session.commit()
 
-        return jsonify(self._parse_meal(update_meal.first()))
+        return jsonify(_parse_meal(update_meal.first()))
 
     def delete(self, meal_id):
         meal = db_session.query(Meal).get(meal_id)
         if meal:
             db_session.delete(meal)
             db_session.commit()
-            return jsonify(self._parse_meal(meal))
+            return jsonify(_parse_meal(meal))
         return make_response(jsonify({'error': 'not found'}), 404)
 
 register_api(MealAPI, 'meal_api', '/meal/', pk='meal_id')

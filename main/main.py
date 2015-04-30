@@ -23,14 +23,11 @@ else:
 app.config.from_object(flask_configs)
 
 from main.database import db_session, Meal
+from main.functions import _parse_meal
 
 # ==============================================================================
 # ==============================================================================
 # ==============================================================================
-
-import flask.ext.login as flask_login
-
-login_manager = flask_login.LoginManager()
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -60,17 +57,6 @@ app.register_blueprint(bp_meal)
 from main.BOrder.order import bp_order
 app.register_blueprint(bp_order)
 
-
-# ==============================================================================
-# ==============================================================================
-# ==============================================================================
-
-@app.before_request
-def user():
-    print(flask_login.current_user)
-    print(flask_login.current_user.is_anonymous())
-    return
-
 # ==============================================================================
 # ====================================================================== ##Views
 # ==============================================================================
@@ -80,21 +66,6 @@ class NextWeekMenu(View):
         self.today = datetime.date.today()
         self.next_week = self.today + datetime.timedelta(weeks=1)
         self.step = 0
-
-    def _parse_meal(self, meal_obj, date):
-        meal = {
-            'id': meal_obj.id,
-            'title': meal_obj.title,
-            'description': meal_obj.description,
-            'category': meal_obj.category,
-            'day_linked': meal_obj.day_linked,
-            'enabled': meal_obj.enabled,
-            'order_date': str(date),
-            'timestamp_created': meal_obj.timestamp_created,
-            'timestamp_modified': meal_obj.timestamp_modified
-        }
-
-        return meal
 
     def run_week(self):
         while self.step < 5:
@@ -107,7 +78,7 @@ class NextWeekMenu(View):
 
     def dispatch_request(self):
         meals = list(self.run_week())
-        meals[:] = [self._parse_meal(meal, date) for day_meals, date in meals for meal in day_meals]
+        meals[:] = [_parse_meal(meal, order_date=str(date)) for day_meals, date in meals for meal in day_meals]
         return jsonify({'meals': meals})
 
 home_page = NextWeekMenu.as_view('home')

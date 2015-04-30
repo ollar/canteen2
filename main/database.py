@@ -10,11 +10,10 @@ Base.query = db_session.query_property()
 
 from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-import flask.ext.login as flask_login
 from werkzeug import generate_password_hash
 import datetime
 
-class User(Base, flask_login.UserMixin):
+class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     real_name = Column(String)
