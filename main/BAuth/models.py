@@ -11,7 +11,7 @@ class Client(Base):
     description = Column(String(400))
 
     # creator of the client, not required
-    user_id = Column(ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     # required if you need to support client credential
     user = relationship('User')
 
