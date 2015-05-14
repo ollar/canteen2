@@ -22,7 +22,6 @@ class Order_API(MethodView):
 
         orders = db_session.query(Order).all()
         if orders:
-            print(orders[-1].user)
             orders[:] = [_parse_order(order) for order in orders]
         return jsonify({'orders': orders})
 

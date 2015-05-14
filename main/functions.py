@@ -44,6 +44,8 @@ def _parse_order(order_obj):
         'meal_id': order_obj.meal_id,
         'quantity': order_obj.quantity,
         'timestamp_created': str(order_obj.timestamp_created),
-        'timestamp_modified': str(order_obj.timestamp_modified)
+        'timestamp_modified': str(order_obj.timestamp_modified),
+        'user': _parse_user(order_obj.user),
+        'meal': _parse_meal(order_obj.meal)
     }
     return order
