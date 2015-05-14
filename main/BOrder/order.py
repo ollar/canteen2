@@ -21,11 +21,12 @@ class Order_API(MethodView):
                 return make_response(jsonify({'error': 'not found'}), 404)
 
         orders = db_session.query(Order).all()
-        orders[:] = [_parse_order(order) for order in orders]
+        if orders:
+            print(orders[-1].user)
+            orders[:] = [_parse_order(order) for order in orders]
         return jsonify({'orders': orders})
 
     def post(self):
-        print(self.json)
         new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
                         meal_id=self.json.get('meal_id'),
                         user_id=self.json.get('user_id'),

@@ -33,9 +33,8 @@ from main.functions import _parse_meal
 def shutdown_session(exception=None):
     db_session.remove()
 
-
 # ==============================================================================
-# ======================================================================= ##User
+# ====================================================================== ##Oauth
 # ==============================================================================
 
 from main.BAuth.oauth_serv import bp_oauth
@@ -77,7 +76,7 @@ class NextWeekMenu(View):
     def run_week(self):
         while self.step < 5:
             day = self.next_week - datetime.timedelta(days=self.today.weekday() - self.step)
-            meals = db_session.query(Meal).filter_by(day_linked=day.weekday(), enabled=1) \
+            meals = db_session.query(Meal).filter_by(day_linked=day.weekday(), enabled=True) \
                 .order_by('category').all()
 
             yield meals, day

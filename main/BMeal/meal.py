@@ -25,6 +25,7 @@ class MealAPI(MethodView):
         return jsonify({'meals': meals})
     #
     def post(self):
+        print(self.json.get('enabled'))
         new_meal = Meal(title=self.json.get('title'),
                         description=self.json.get('description'),
                         category=self.json.get('category'),

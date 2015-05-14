@@ -8,7 +8,7 @@ db_session = scoped_session(sessionmaker(bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from werkzeug import generate_password_hash
 import datetime
@@ -42,17 +42,18 @@ class Order(Base):
     timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
-    # user = relationship('User')
-    # meal = relationship('Meal')
+    user = relationship('User')
+    meal = relationship('Meal')
 
     def __init__(self, order_date, meal_id, user_id, quantity):
         self.user_id = user_id
         self.order_date = order_date
         self.meal_id = meal_id
         self.quantity = quantity
+        self.timestamp_modified = datetime.datetime.utcnow()
 
     def __repr__(self):
-        return '<Order: {0} by {1}>'.format(self.date, self.user_id)
+        return '<Order: {0} by {1}>'.format(self.order_date, self.user_id)
 
 
 class Meal(Base):
@@ -62,7 +63,7 @@ class Meal(Base):
     description = Column(String)
     category = Column(Integer)
     day_linked = Column(Integer)
-    enabled = Column(Integer, default=1)
+    enabled = Column(Boolean, default=True)
     timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
@@ -76,11 +77,3 @@ class Meal(Base):
 
     def __repr__(self):
         return '<Meals {0}>'.format(self.title)
-
-
-
-def init_db():
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
-    Base.metadata.create_all(bind=engine)
