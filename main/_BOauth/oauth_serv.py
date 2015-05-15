@@ -1,12 +1,21 @@
 from main.main import app
-from flask import Blueprint
+from flask import Blueprint, session
 from .models import Client, Grant, Token, db_session
+from main.database import User
 from flask_oauthlib.provider import OAuth2Provider
 from datetime import datetime, timedelta
+import os
+os.environ['DEBUG'] = 'true'
 
 oauth = OAuth2Provider(app)
 
 bp_oauth = Blueprint('bp_oauth', __name__, url_prefix='/oauth')
+
+def current_user():
+    if 'id' in session:
+        uid = session['id']
+        return db_session.query(User).get(uid)
+    return
 
 @oauth.clientgetter
 def load_client(client_id):

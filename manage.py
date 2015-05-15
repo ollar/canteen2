@@ -30,9 +30,9 @@ class InitDB(Command):
 
     def run(self, debug):
         if debug:
-            self.engine = self.create_engine(self.dev_sql_url)
+            self.engine = self.create_engine(self.dev_sql_url, echo=True)
         else:
-            self.engine = self.create_engine(self.prod_sql_url)
+            self.engine = self.create_engine(self.prod_sql_url, echo=True)
         self.Base.metadata.drop_all(bind=self.engine)
         print("Database dropped.")
         self.Base.metadata.create_all(bind=self.engine)

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask.views import MethodView, View
 from flask.ext.cors import CORS
+from flask.ext.login import LoginManager
 import datetime
 import sys
 
@@ -10,6 +11,8 @@ if len(sys.argv) > 1 and sys.argv[1] == '-d':
 
 app = Flask(__name__)
 cors = CORS(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 # ==============================================================================
 # ==================================================================== ##Configs
@@ -22,8 +25,13 @@ else:
 
 app.config.from_object(flask_configs)
 
-from main.database import db_session, Meal
+from main.database import db_session
+from main.models import Meal
 from main.functions import _parse_meal
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db_session.query(User).get(user_id)
 
 # ==============================================================================
 # ==============================================================================
@@ -32,13 +40,6 @@ from main.functions import _parse_meal
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-# ==============================================================================
-# ====================================================================== ##Oauth
-# ==============================================================================
-
-from main.BAuth.oauth_serv import bp_oauth
-app.register_blueprint(bp_oauth)
 
 # ==============================================================================
 # ======================================================================= ##User

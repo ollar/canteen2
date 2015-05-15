@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
-from main.database import db_session, Meal
+from main.database import db_session
+from main.models import Meal
 from main.functions import register_api, _parse_meal
 import datetime
 import json
@@ -25,7 +26,6 @@ class MealAPI(MethodView):
         return jsonify({'meals': meals})
     #
     def post(self):
-        print(self.json.get('enabled'))
         new_meal = Meal(title=self.json.get('title'),
                         description=self.json.get('description'),
                         category=self.json.get('category'),

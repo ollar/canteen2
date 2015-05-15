@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request, abort, make_response
+from flask import Blueprint, jsonify, request, abort, make_response, session
 from flask.views import MethodView
+from flask.ext.login import login_user, current_user, make_secure_token
 from sqlalchemy.exc import IntegrityError, StatementError
-from main.database import db_session, User
+from main.database import db_session
+from main.models import User
 from werkzeug import generate_password_hash, check_password_hash
 from main.functions import register_api, _parse_user
 import datetime
@@ -31,14 +33,17 @@ class UserAPI(MethodView):
 
         new_user = User(real_name=self.json.get('real_name'),
                         username=self.json.get('username'),
-                        password=self.json.get('password'),
-                        timestamp_modified=datetime.datetime.utcnow())
+                        password=self.json.get('password'))
+
 
         db_session.add(new_user)
         try:
             db_session.commit()
         except IntegrityError as e:
             return make_response(jsonify({'error': 'username not unique'}), 500)
+
+        login_user(new_user)
+        print(session)
 
         return jsonify(_parse_user(new_user))
 

@@ -4,14 +4,8 @@ from main.database import Base, db_session
 
 class Client(Base):
     __tablename__ = 'client'
-    # human readable name, not required
-    name = Column(String(40))
-
-    # human readable description, not required
-    description = Column(String(400))
-
     # creator of the client, not required
-    user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
     # required if you need to support client credential
     user = relationship('User')
 
