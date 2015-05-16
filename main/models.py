@@ -15,6 +15,8 @@ class User(Base, UserMixin):
     timestamp_created = Column(DateTime, nullable=False, default=datetime.datetime.utcnow())
     timestamp_modified = Column(DateTime)
 
+    orders = relationship('Order', backref='user')
+
     def __init__(self, username, password, real_name=""):
         self.real_name = real_name
         self.username = username
@@ -30,12 +32,11 @@ class Order(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
     order_date = Column(Date)
-    meal_id = Column(Integer, ForeignKey('meal.id', ondelete='CASCADE'))
+    meal_id = Column(Integer, ForeignKey('meal.id'))
     quantity = Column(Integer, default=1, nullable=False)
     timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
-    user = relationship('User')
     meal = relationship('Meal')
 
     def __init__(self, order_date, meal_id, user_id, quantity):

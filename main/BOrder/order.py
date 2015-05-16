@@ -45,7 +45,7 @@ class Order_API(MethodView):
         if order:
             db_session.delete(order)
             db_session.commit()
-            return jsonify(_parse_order(order))
+            return jsonify({'status': 'success'})
         return make_response(jsonify({'error': 'not found'}), 404)
 
 register_api(Order_API, 'order_api', '/order/', pk='order_id')
