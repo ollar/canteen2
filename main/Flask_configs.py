@@ -10,6 +10,5 @@ class DevConfig(Config):
     DEBUG = True
 
 
-class TestConfig(Config):
+class TestConfig(DevConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.getcwd(), 'canteen.db')
-    DEBUG = True

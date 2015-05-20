@@ -1,9 +1,8 @@
-from flask import Blueprint, jsonify, request, abort, make_response, session
+from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
-from flask.ext.login import login_user, current_user, make_secure_token
 from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session
-from main.models import User
+from main.models import User, Token
 from werkzeug import generate_password_hash, check_password_hash
 from main.functions import register_api, _parse_user
 import datetime
@@ -41,9 +40,6 @@ class UserAPI(MethodView):
             db_session.commit()
         except IntegrityError as e:
             return make_response(jsonify({'error': 'username not unique'}), 500)
-
-        login_user(new_user)
-        print(session)
 
         return jsonify(_parse_user(new_user))
 
@@ -84,14 +80,28 @@ def login():
     if not user:
         return make_response(jsonify({'error': 'no users with such username'}), 401)
     elif check_password_hash(user.password, json.get('password')):
-        return make_response(jsonify(_parse_user(user)), 200)
+        token = {}
+        tokens = db_session.query(Token).filter_by(user_id=user.id).all()
+        is_expired_list = list(map(lambda t: t.is_expired(), tokens))
+        all_expired = all(is_expired_list)
+
+        if all_expired:
+            token = Token(user_id=user.id)
+            db_session.add(token)
+            db_session.commit()
+        else:
+            token = [t for t in tokens if not t.is_expired()].pop()
+
+        logged_user = _parse_user(user)
+        logged_user.update({'token': token.token})
+
+        return make_response(jsonify(logged_user), 200)
     else:
         return make_response(jsonify({'error': 'password incorrect'}), 401)
 
 @bp_user.route('/logout')
 def logout():
-    flask_login.logout_user()
-    return 'ok'
+    return ''
 
 
 register_api(UserAPI, 'user_api', '/user/', pk='user_id')
