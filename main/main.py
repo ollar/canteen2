@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask.views import MethodView, View
 from flask.ext.cors import CORS
-from flask.ext.login import LoginManager
 import datetime
 import sys
 
@@ -11,8 +10,6 @@ if len(sys.argv) > 1 and sys.argv[1] == '-d':
 
 app = Flask(__name__)
 cors = CORS(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 # ==============================================================================
 # ==================================================================== ##Configs
@@ -29,9 +26,10 @@ from main.database import db_session
 from main.models import Meal
 from main.functions import _parse_meal
 
-@login_manager.user_loader
-def load_user(user_id):
-    return db_session.query(User).get(user_id)
+@app.before_request
+def get_token():
+    token = request.headers.get('access_token')
+    session['access_token'] = token
 
 # ==============================================================================
 # ==============================================================================

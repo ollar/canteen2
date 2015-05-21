@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort, make_response
+from flask import Blueprint, jsonify, request, abort, make_response, session
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session
@@ -29,6 +29,7 @@ class UserAPI(MethodView):
     def post(self):
         assert self.json.get('username'), 'username is required'
         assert self.json.get('password'), 'password is required'
+
 
         new_user = User(real_name=self.json.get('real_name'),
                         username=self.json.get('username'),
