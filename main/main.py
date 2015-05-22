@@ -100,7 +100,7 @@ class NextWeekMenu(View):
             yield meals, day
             self.step += 1
 
-    @auth_required
+    # @auth_required
     def dispatch_request(self):
         meals = list(self.run_week())
         meals[:] = [_parse_meal(meal, order_date=str(date)) for day_meals, date in meals for meal in day_meals]
