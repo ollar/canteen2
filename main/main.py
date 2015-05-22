@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, g, jsonify, make_response
 from flask.views import MethodView, View
 from flask.ext.cors import CORS
+from functools import wraps
 import datetime
 import sys
 
@@ -23,13 +24,31 @@ else:
 app.config.from_object(flask_configs)
 
 from main.database import db_session
-from main.models import Meal
+from main.models import Meal, User, Token
 from main.functions import _parse_meal
 
 @app.before_request
 def get_token():
     token = request.headers.get('access_token')
     session['access_token'] = token
+    g.user = get_user(token)
+
+def get_user(_token):
+    user = db_session.query(Token).filter_by(token=_token).first()
+    if user:
+        return user.user
+    return
+
+def auth_required(f, *args, **kwargs):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not g.user:
+            return make_response(jsonify({'error': 'access_denied'}), 403)
+
+        return f(*args, **kwargs)
+
+    return wrapper
+
 
 # ==============================================================================
 # ==============================================================================
@@ -81,6 +100,7 @@ class NextWeekMenu(View):
             yield meals, day
             self.step += 1
 
+    @auth_required
     def dispatch_request(self):
         meals = list(self.run_week())
         meals[:] = [_parse_meal(meal, order_date=str(date)) for day_meals, date in meals for meal in day_meals]

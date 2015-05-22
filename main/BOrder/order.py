@@ -3,6 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session
 from main.models import Order
+from main.main import auth_required
 from main.functions import register_api, _parse_order
 import datetime
 import json
@@ -13,6 +14,7 @@ class Order_API(MethodView):
     def __init__(self):
         self.json = request.json
 
+    @auth_required
     def get(self, order_id):
         if order_id:
             order = db_session.query(Order).get(order_id)
@@ -26,6 +28,7 @@ class Order_API(MethodView):
             orders[:] = [_parse_order(order) for order in orders]
         return jsonify({'orders': orders})
 
+    @auth_required
     def post(self):
         new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
                         meal_id=self.json.get('meal_id'),
@@ -37,9 +40,11 @@ class Order_API(MethodView):
 
         return jsonify(_parse_order(new_order))
 
+    @auth_required
     def put(self, order_id):
         pass
 
+    @auth_required
     def delete(self, order_id):
         order = db_session.query(Order).get(order_id)
         if order:

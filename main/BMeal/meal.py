@@ -3,6 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session
 from main.models import Meal
+from main.main import auth_required
 from main.functions import register_api, _parse_meal
 import datetime
 import json
@@ -13,6 +14,7 @@ class MealAPI(MethodView):
     def __init__(self):
         self.json = request.json
 
+    @auth_required
     def get(self, meal_id):
         if meal_id:
             meal = db_session.query(Meal).get(meal_id)
@@ -24,7 +26,8 @@ class MealAPI(MethodView):
         meals = db_session.query(Meal).all()
         meals[:] = [_parse_meal(meal) for meal in meals]
         return jsonify({'meals': meals})
-    #
+
+    @auth_required
     def post(self):
         new_meal = Meal(title=self.json.get('title'),
                         description=self.json.get('description'),
@@ -38,6 +41,7 @@ class MealAPI(MethodView):
 
         return jsonify(_parse_meal(new_meal))
 
+    @auth_required
     def put(self, meal_id):
         json_dict = {
             'title': self.json.get('title'),
@@ -56,6 +60,7 @@ class MealAPI(MethodView):
 
         return jsonify(_parse_meal(update_meal.first()))
 
+    @auth_required
     def delete(self, meal_id):
         meal = db_session.query(Meal).get(meal_id)
         if meal:
