@@ -15,7 +15,7 @@ class UserAPI(MethodView):
     def __init__(self):
         self.json = request.json
 
-    # @auth_required
+    @auth_required
     def get(self, user_id):
         if user_id:
             user = db_session.query(User).get(user_id)
