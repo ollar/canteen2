@@ -81,6 +81,8 @@ class Token(Base):
     token = Column(String(40))
     expires = Column(DateTime)
 
+    user = relationship('User')
+
     def __init__(self, user_id):
         self.user_id = user_id
         self.token = self.generate_token()

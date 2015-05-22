@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request, abort, make_response, session
+from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError, StatementError
+from main.main import auth_required
 from main.database import db_session
 from main.models import User, Token
 from werkzeug import generate_password_hash, check_password_hash
@@ -14,6 +15,7 @@ class UserAPI(MethodView):
     def __init__(self):
         self.json = request.json
 
+    # @auth_required
     def get(self, user_id):
         if user_id:
             user = db_session.query(User).get(user_id)
@@ -44,6 +46,7 @@ class UserAPI(MethodView):
 
         return jsonify(_parse_user(new_user))
 
+    @auth_required
     def put(self, user_id):
         json_dict = self.json
 
@@ -65,7 +68,7 @@ class UserAPI(MethodView):
             return make_response(jsonify({'error': 'database error'}), 500)
 
         return make_response(jsonify(_parse_user(update_user.first())), 200)
-
+    @auth_required
     def delete(self, user_id):
         user = db_session.query(User).get(user_id)
         if user:
@@ -103,6 +106,5 @@ def login():
 @bp_user.route('/logout')
 def logout():
     return ''
-
 
 register_api(UserAPI, 'user_api', '/user/', pk='user_id')
