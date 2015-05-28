@@ -1,4 +1,7 @@
 from main.main import app
+from flask import make_response, jsonify, g
+from functools import wraps
+
 
 def register_api(view, endpoint, url, pk='id', pk_type='int'):
     view_func = view.as_view(endpoint)
@@ -55,3 +58,22 @@ def _parse_order(order_obj, detailed=True):
             'meal': _parse_meal(order_obj.meal)
         })
     return order
+
+def auth_required(f, *args, **kwargs):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not g.user:
+            return make_response(jsonify({'error': 'access_denied'}), 403)
+        return f(*args, **kwargs)
+    return wrapper
+
+def user_allowed(user_id=1):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            if g.user and g.user.id in (1, user_id):
+                return f(*args, **kwargs)
+            else:
+                return make_response(jsonify({'error': 'access_denied'}), 401)
+        return wrapper
+    return decorator

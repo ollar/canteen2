@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, session, g, jsonify, make_response
 from flask.views import MethodView, View
 from flask.ext.cors import CORS
-from functools import wraps
 import datetime
 import sys
 
@@ -38,16 +37,6 @@ def get_user(_token):
     if user:
         return user.user
     return
-
-def auth_required(f, *args, **kwargs):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if not g.user:
-            return make_response(jsonify({'error': 'access_denied'}), 403)
-
-        return f(*args, **kwargs)
-
-    return wrapper
 
 
 # ==============================================================================
