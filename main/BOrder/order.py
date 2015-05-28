@@ -3,8 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session
 from main.models import Order
-from main.main import auth_required
-from main.functions import register_api, _parse_order
+from main.functions import register_api, _parse_order, auth_required, user_allowed
 import datetime
 import json
 

@@ -1,11 +1,10 @@
 from flask import Blueprint, jsonify, request, abort, make_response
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError, StatementError
-from main.main import auth_required
 from main.database import db_session
 from main.models import User, Token
 from werkzeug import generate_password_hash, check_password_hash
-from main.functions import register_api, _parse_user
+from main.functions import register_api, _parse_user, auth_required, user_allowed
 import datetime
 import json
 
@@ -47,8 +46,9 @@ class UserAPI(MethodView):
         return jsonify(_parse_user(new_user))
 
     @auth_required
+    # @user_allowed(user_id)
     def put(self, user_id):
-        json_dict = self.json
+        json_dict = {}
 
         json_dict = {
             'real_name': self.json.get('real_name'),
@@ -56,13 +56,11 @@ class UserAPI(MethodView):
         }
 
         if json_dict.get('password'):
-            json_dict.update({'password': generate_password_hash(str(json_dict.get('password')).encode())})
-
-        json_dict['timestamp_modified'] = 'asdfasd'
+            json_dict.update({'password': generate_password_hash(str(self.json.get('password')).encode())})
 
         update_user = db_session.query(User).filter_by(id=user_id)
         try:
-            update.update(json_dict)
+            update_user.update(json_dict)
             db_session.commit()
         except StatementError:
             return make_response(jsonify({'error': 'database error'}), 500)
