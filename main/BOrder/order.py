@@ -13,6 +13,14 @@ class Order_API(MethodView):
     def __init__(self):
         self.json = request.json
 
+    def _check_order(self):
+        _order = db_session.query(Order).filter_by(meal_id=self.json.get('meal_id'), order_date=self.json.get('order_date')).all()
+
+        if _order:
+            return False
+        else:
+            return True
+
     @auth_required
     def get(self, order_id):
         if order_id:
@@ -29,6 +37,9 @@ class Order_API(MethodView):
 
     @auth_required
     def post(self):
+        if not self._check_order():
+            return make_response(jsonify({'error': 'already ordered'}), 400)
+
         new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
                         meal_id=self.json.get('meal_id'),
                         user_id=self.json.get('user_id'),
