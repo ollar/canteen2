@@ -31,7 +31,6 @@ class UserAPI(MethodView):
         assert self.json.get('username'), 'username is required'
         assert self.json.get('password'), 'password is required'
 
-
         new_user = User(real_name=self.json.get('real_name'),
                         username=self.json.get('username'),
                         password=self.json.get('password'))
@@ -48,14 +47,12 @@ class UserAPI(MethodView):
     @auth_required
     # @user_allowed(user_id)
     def put(self, user_id):
-        json_dict = {}
-
         json_dict = {
             'real_name': self.json.get('real_name'),
             'username': self.json.get('username')
         }
 
-        if json_dict.get('password'):
+        if self.json.get('password'):
             json_dict.update({'password': generate_password_hash(str(self.json.get('password')).encode())})
 
         update_user = db_session.query(User).filter_by(id=user_id)
