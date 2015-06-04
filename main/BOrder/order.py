@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request, abort, make_response
+from flask import Blueprint, jsonify, request, abort, make_response, g
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from main.database import db_session
 from main.models import Order
-from main.functions import register_api, _parse_order, auth_required, user_allowed
+from main.functions import register_api, _parse_order, auth_required, restrict_users
 import datetime
 import json
 
@@ -14,14 +14,19 @@ class Order_API(MethodView):
         self.json = request.json
 
     def _check_order(self):
-        _order = db_session.query(Order).filter_by(meal_id=self.json.get('meal_id'), order_date=self.json.get('order_date')).all()
+        _orders = db_session.query(Order).filter_by(
+            user_id=g.user.id,
+            meal_id=self.json.get('meal_id'),
+            order_date=self.json.get('order_date')
+        ).all()
 
-        if _order:
+        if _orders:
             return False
         else:
             return True
 
     @auth_required
+    @restrict_users
     def get(self, order_id):
         if order_id:
             order = db_session.query(Order).get(order_id)
@@ -51,6 +56,7 @@ class Order_API(MethodView):
         return jsonify(_parse_order(new_order))
 
     @auth_required
+    @restrict_users
     def put(self, order_id):
         pass
 
