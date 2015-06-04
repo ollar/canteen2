@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session
 from main.models import User, Token
 from werkzeug import generate_password_hash, check_password_hash
-from main.functions import register_api, _parse_user, auth_required, user_allowed
+from main.functions import register_api, _parse_user, auth_required, restrict_users
 import datetime
 import json
 
@@ -15,6 +15,7 @@ class UserAPI(MethodView):
         self.json = request.json
 
     @auth_required
+    @restrict_users
     def get(self, user_id):
         if user_id:
             user = db_session.query(User).get(user_id)
@@ -45,7 +46,7 @@ class UserAPI(MethodView):
         return jsonify(_parse_user(new_user))
 
     @auth_required
-    # @user_allowed(user_id)
+    @restrict_users
     def put(self, user_id):
         json_dict = {
             'real_name': self.json.get('real_name'),
@@ -63,7 +64,9 @@ class UserAPI(MethodView):
             return make_response(jsonify({'error': 'database error'}), 500)
 
         return make_response(jsonify(_parse_user(update_user.first())), 200)
+
     @auth_required
+    @restrict_users
     def delete(self, user_id):
         user = db_session.query(User).get(user_id)
         if user:

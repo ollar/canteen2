@@ -63,17 +63,22 @@ def auth_required(f, *args, **kwargs):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not g.user:
-            return make_response(jsonify({'error': 'access_denied'}), 403)
+            return make_response(jsonify({'error': 'access_denied'}), 401)
         return f(*args, **kwargs)
     return wrapper
 
-def user_allowed(user_id=1):
-    def decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            if g.user and g.user.id in (1, user_id):
-                return f(*args, **kwargs)
-            else:
-                return make_response(jsonify({'error': 'access_denied'}), 401)
-        return wrapper
-    return decorator
+def restrict_users(f):
+    """
+    Checks if logged user_id equals contents user_id.
+    User can edit only his profile so urls /user/ are on scope. All other urls will allow only uid == 1.
+    ex: /user/15 - content uid == 15, so only user with uid == 15 or 1 are allowed.
+    """
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        user_id = kwargs.get('user_id', 0)
+
+        if g.user and g.user.id in (1, user_id):
+            return f(*args, **kwargs)
+        else:
+            return make_response(jsonify({'error': 'access_denied'}), 403)
+    return wrapper
