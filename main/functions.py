@@ -6,10 +6,11 @@ from functools import wraps
 def register_api(view, endpoint, url, pk='id', pk_type='int'):
     view_func = view.as_view(endpoint)
     app.add_url_rule(url, defaults={pk: None},
-                     view_func=view_func, methods=['GET',])
-    app.add_url_rule(url, view_func=view_func, methods=['POST',])
+                     view_func=view_func, methods=['GET', ])
+    app.add_url_rule(url, view_func=view_func, methods=['POST', ])
     app.add_url_rule('%s<%s:%s>' % (url, pk_type, pk), view_func=view_func,
                      methods=['GET', 'PUT', 'DELETE'])
+
 
 def _parse_user(user_obj, detailed=True):
     user = {
@@ -21,9 +22,11 @@ def _parse_user(user_obj, detailed=True):
         'timestamp_modified': str(user_obj.timestamp_modified),
     }
     if detailed:
-        user.update({'orders': [_parse_order(order, detailed=False) for order in user_obj.orders]})
+        user.update(
+            {'orders': [_parse_order(order, detailed=False) for order in user_obj.orders]})
 
     return user
+
 
 def _parse_meal(meal_obj, *args, **kwargs):
     meal = {
@@ -40,6 +43,7 @@ def _parse_meal(meal_obj, *args, **kwargs):
     meal.update(kwargs)
 
     return meal
+
 
 def _parse_order(order_obj, detailed=True):
     order = {
@@ -59,6 +63,7 @@ def _parse_order(order_obj, detailed=True):
         })
     return order
 
+
 def auth_required(f, *args, **kwargs):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -66,6 +71,7 @@ def auth_required(f, *args, **kwargs):
             return make_response(jsonify({'error': 'access_denied'}), 401)
         return f(*args, **kwargs)
     return wrapper
+
 
 def restrict_users(f):
     """

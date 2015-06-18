@@ -9,7 +9,9 @@ import json
 
 bp_order = Blueprint('bp_order', __name__, url_prefix='/order')
 
+
 class Order_API(MethodView):
+
     def __init__(self):
         self.json = request.json
 
@@ -46,9 +48,9 @@ class Order_API(MethodView):
             return make_response(jsonify({'error': 'already ordered'}), 400)
 
         new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
-                        meal_id=self.json.get('meal_id'),
-                        user_id=self.json.get('user_id'),
-                        quantity=self.json.get('quantity'))
+                          meal_id=self.json.get('meal_id'),
+                          user_id=self.json.get('user_id'),
+                          quantity=self.json.get('quantity'))
 
         db_session.add(new_order)
         db_session.commit()

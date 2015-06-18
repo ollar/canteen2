@@ -9,7 +9,9 @@ import json
 
 bp_meal = Blueprint('bp_meal', __name__, url_prefix='/meal')
 
+
 class MealAPI(MethodView):
+
     def __init__(self):
         self.json = request.json
 
