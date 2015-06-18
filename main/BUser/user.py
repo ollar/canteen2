@@ -10,7 +10,9 @@ import json
 
 bp_user = Blueprint('bp_user', __name__, url_prefix='/user')
 
+
 class UserAPI(MethodView):
+
     def __init__(self):
         self.json = request.json
 
@@ -36,7 +38,6 @@ class UserAPI(MethodView):
                         username=self.json.get('username'),
                         password=self.json.get('password'))
 
-
         db_session.add(new_user)
         try:
             db_session.commit()
@@ -54,7 +55,8 @@ class UserAPI(MethodView):
         }
 
         if self.json.get('password'):
-            json_dict.update({'password': generate_password_hash(str(self.json.get('password')).encode())})
+            json_dict.update(
+                {'password': generate_password_hash(str(self.json.get('password')).encode())})
 
         update_user = db_session.query(User).filter_by(id=user_id)
         try:
@@ -75,10 +77,12 @@ class UserAPI(MethodView):
             return jsonify(_parse_user(user))
         return make_response(jsonify({'error': 'not found'}), 404)
 
+
 @bp_user.route('/login', methods=['POST'])
 def login():
     json = request.json
-    user = db_session.query(User).filter_by(username=json.get('username')).first()
+    user = db_session.query(User).filter_by(
+        username=json.get('username')).first()
     if not user:
         return make_response(jsonify({'error': 'no users with such username'}), 401)
     elif check_password_hash(user.password, json.get('password')):
@@ -100,6 +104,7 @@ def login():
         return make_response(jsonify(logged_user), 200)
     else:
         return make_response(jsonify({'error': 'password incorrect'}), 401)
+
 
 @bp_user.route('/logout')
 def logout():

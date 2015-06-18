@@ -26,11 +26,13 @@ from main.database import db_session
 from main.models import Meal, User, Token
 from main.functions import _parse_meal
 
+
 @app.before_request
 def get_token():
     token = request.headers.get('access_token')
     session['access_token'] = token
     g.user = get_user(token)
+
 
 def get_user(_token):
     user = db_session.query(Token).filter_by(token=_token).first()
@@ -74,7 +76,9 @@ app.register_blueprint(bp_order)
 # ====================================================================== ##Views
 # ==============================================================================
 
+
 class NextWeekMenu(View):
+
     def __init__(self):
         self.today = datetime.date.today()
         self.next_week = self.today + datetime.timedelta(weeks=1)
@@ -82,7 +86,8 @@ class NextWeekMenu(View):
 
     def run_week(self):
         while self.step < 5:
-            day = self.next_week - datetime.timedelta(days=self.today.weekday() - self.step)
+            day = self.next_week - \
+                datetime.timedelta(days=self.today.weekday() - self.step)
             meals = db_session.query(Meal).filter_by(day_linked=day.weekday(), enabled=True) \
                 .order_by('category').all()
 
@@ -92,7 +97,8 @@ class NextWeekMenu(View):
     # @auth_required
     def dispatch_request(self):
         meals = list(self.run_week())
-        meals[:] = [_parse_meal(meal, order_date=str(date)) for day_meals, date in meals for meal in day_meals]
+        meals[:] = [_parse_meal(meal, order_date=str(date))
+                    for day_meals, date in meals for meal in day_meals]
         return jsonify({'meals': meals})
 
 home_page = NextWeekMenu.as_view('home')

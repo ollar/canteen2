@@ -7,13 +7,15 @@ from werkzeug import generate_password_hash
 from werkzeug.security import gen_salt
 import datetime
 
+
 class User(Base, UserMixin):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     real_name = Column(String)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    timestamp_created = Column(DateTime, nullable=False, default=datetime.datetime.utcnow())
+    timestamp_created = Column(
+        DateTime, nullable=False, default=datetime.datetime.utcnow())
     timestamp_modified = Column(DateTime)
 
     orders = relationship('Order', backref='user')
@@ -35,7 +37,8 @@ class Order(Base):
     order_date = Column(Date)
     meal_id = Column(Integer, ForeignKey('meal.id'))
     quantity = Column(Integer, default=1, nullable=False)
-    timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
+    timestamp_created = Column(
+        DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
     meal = relationship('Meal')
@@ -59,7 +62,8 @@ class Meal(Base):
     category = Column(Integer)
     day_linked = Column(Integer)
     enabled = Column(Boolean, default=True)
-    timestamp_created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
+    timestamp_created = Column(
+        DateTime, default=datetime.datetime.utcnow(), nullable=False)
     timestamp_modified = Column(DateTime)
 
     def __init__(self, title, description, category, day_linked, enabled=1, *args, **kwargs):
