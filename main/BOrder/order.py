@@ -35,7 +35,7 @@ class Order_API(MethodView):
             if order:
                 return jsonify(_parse_order(order))
             else:
-                return make_response(jsonify({'error': 'not found'}), 404)
+                return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
         orders = db_session.query(Order).all()
         if orders:
@@ -45,7 +45,7 @@ class Order_API(MethodView):
     @auth_required
     def post(self):
         if not self._check_order():
-            return make_response(jsonify({'error': 'already ordered'}), 400)
+            return make_response(jsonify({'type': 'error', 'text': 'already ordered'}), 400)
 
         new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
                           meal_id=self.json.get('meal_id'),
@@ -55,7 +55,7 @@ class Order_API(MethodView):
         db_session.add(new_order)
         db_session.commit()
 
-        return jsonify(_parse_order(new_order))
+        return jsonify(_parse_order(new_order, detailed=False))
 
     @auth_required
     @restrict_users
@@ -69,6 +69,6 @@ class Order_API(MethodView):
             db_session.delete(order)
             db_session.commit()
             return jsonify({'status': 'success'})
-        return make_response(jsonify({'error': 'not found'}), 404)
+        return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 register_api(Order_API, 'order_api', '/order/', pk='order_id')

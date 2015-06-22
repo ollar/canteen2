@@ -24,7 +24,7 @@ class UserAPI(MethodView):
             if user:
                 return jsonify(_parse_user(user))
             else:
-                return make_response(jsonify({'error': 'not found'}), 404)
+                return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
         users = db_session.query(User).all()
         users[:] = [_parse_user(user) for user in users]
@@ -42,7 +42,7 @@ class UserAPI(MethodView):
         try:
             db_session.commit()
         except IntegrityError as e:
-            return make_response(jsonify({'error': 'username not unique'}), 500)
+            return make_response(jsonify({'type': 'error', 'text': 'username not unique'}), 403)
 
         return jsonify(_parse_user(new_user))
 
@@ -63,7 +63,7 @@ class UserAPI(MethodView):
             update_user.update(json_dict)
             db_session.commit()
         except StatementError:
-            return make_response(jsonify({'error': 'database error'}), 500)
+            return make_response(jsonify({'type': 'error', 'text': 'database error'}), 500)
 
         return make_response(jsonify(_parse_user(update_user.first())), 200)
 
@@ -75,7 +75,7 @@ class UserAPI(MethodView):
             db_session.delete(user)
             db_session.commit()
             return jsonify(_parse_user(user))
-        return make_response(jsonify({'error': 'not found'}), 404)
+        return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 
 @bp_user.route('/login', methods=['POST'])
@@ -84,7 +84,7 @@ def login():
     user = db_session.query(User).filter_by(
         username=json.get('username')).first()
     if not user:
-        return make_response(jsonify({'error': 'no users with such username'}), 401)
+        return make_response(jsonify({'type': 'error', 'text': 'no users with such username'}), 401)
     elif check_password_hash(user.password, json.get('password')):
         token = {}
         tokens = db_session.query(Token).filter_by(user_id=user.id).all()
@@ -103,7 +103,7 @@ def login():
 
         return make_response(jsonify(logged_user), 200)
     else:
-        return make_response(jsonify({'error': 'password incorrect'}), 401)
+        return make_response(jsonify({'type': 'error', 'text': 'password incorrect'}), 401)
 
 
 @bp_user.route('/logout')
