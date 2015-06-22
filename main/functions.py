@@ -56,6 +56,8 @@ def _parse_order(order_obj, detailed=True):
         'timestamp_modified': str(order_obj.timestamp_modified),
     }
 
+    print(order_obj)
+
     if detailed:
         order.update({
             'user': _parse_user(order_obj.user, detailed=False),

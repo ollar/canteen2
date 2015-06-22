@@ -21,7 +21,7 @@ class MealAPI(MethodView):
             if meal:
                 return jsonify(_parse_meal(meal))
             else:
-                return make_response(jsonify({'error': 'not found'}), 404)
+                return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
         meals = db_session.query(Meal).all()
         meals[:] = [_parse_meal(meal) for meal in meals]
@@ -69,6 +69,6 @@ class MealAPI(MethodView):
             db_session.delete(meal)
             db_session.commit()
             return jsonify(_parse_meal(meal))
-        return make_response(jsonify({'error': 'not found'}), 404)
+        return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 register_api(MealAPI, 'meal_api', '/meal/', pk='meal_id')
