@@ -70,7 +70,7 @@ def auth_required(f, *args, **kwargs):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not g.user:
-            return make_response(jsonify({'error': 'access_denied'}), 401)
+            return make_response(jsonify({'type': 'error', 'text': 'You need to log in for that'}), 401)
         return f(*args, **kwargs)
     return wrapper
 
@@ -88,5 +88,5 @@ def restrict_users(f):
         if g.user and g.user.id in (1, user_id):
             return f(*args, **kwargs)
         else:
-            return make_response(jsonify({'error': 'access_denied'}), 403)
+            return make_response(jsonify({'type': 'error', 'text': 'Access denied'}), 403)
     return wrapper
