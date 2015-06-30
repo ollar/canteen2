@@ -27,6 +27,10 @@ class Order_API(MethodView):
         else:
             return True
 
+    @staticmethod
+    def _check_actual_date(check_date):
+        return check_date in range(datetime.date.today().timetuple().tm_yday, datetime.date.today().timetuple().tm_yday + 8)
+
     @auth_required
     @restrict_users
     def get(self, order_id):
@@ -45,9 +49,14 @@ class Order_API(MethodView):
     @auth_required
     def post(self):
         if not self._check_order():
-            return make_response(jsonify({'type': 'error', 'text': 'already ordered'}), 400)
+            return make_response(jsonify({'type': 'error', 'text': 'This meal is already in your order'}), 403)
 
-        new_order = Order(order_date=datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date(),
+        _order_date = datetime.datetime.strptime(self.json.get('order_date'), "%Y-%m-%d").date()
+
+        if not self._check_actual_date(_order_date.timetuple().tm_yday):
+            return make_response(jsonify({'type': 'error', 'text': 'You are trying to create an outdated order. That is not allowed'}), 403)
+
+        new_order = Order(order_date=_order_date,
                           meal_id=self.json.get('meal_id'),
                           user_id=self.json.get('user_id'),
                           quantity=self.json.get('quantity'))
@@ -58,14 +67,13 @@ class Order_API(MethodView):
         return jsonify(_parse_order(new_order, detailed=False))
 
     @auth_required
-    @restrict_users
-    def put(self, order_id):
-        pass
-
-    @auth_required
     def delete(self, order_id):
         order = db_session.query(Order).get(order_id)
+
         if order:
+            _order_date = order.order_date
+            if not self._check_actual_date(_order_date.timetuple().tm_yday):
+                return make_response(jsonify({'type': 'error', 'text': 'You are trying to remove old order. That is not allowed'}), 403)
             db_session.delete(order)
             db_session.commit()
             return jsonify({'status': 'success'})
