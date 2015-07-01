@@ -5,7 +5,6 @@ from main.database import db_session
 from main.models import Meal
 from main.functions import register_api, _parse_meal, auth_required, restrict_users
 import datetime
-import json
 
 bp_meal = Blueprint('bp_meal', __name__, url_prefix='/meal')
 
