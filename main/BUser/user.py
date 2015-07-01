@@ -6,7 +6,6 @@ from main.models import User, Token
 from werkzeug import generate_password_hash, check_password_hash
 from main.functions import register_api, _parse_user, auth_required, restrict_users
 import datetime
-import json
 
 bp_user = Blueprint('bp_user', __name__, url_prefix='/user')
 

@@ -5,7 +5,6 @@ from main.database import db_session
 from main.models import Order
 from main.functions import register_api, _parse_order, auth_required, restrict_users
 import datetime
-import json
 
 bp_order = Blueprint('bp_order', __name__, url_prefix='/order')
 
