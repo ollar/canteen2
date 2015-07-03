@@ -34,7 +34,7 @@ class MonthStats(View):
                 order_date=day, user_id=user_id).all(), self._get_month_dates(_month_number)))
         else:
             orders = list(map(lambda day: db_session.query(Order).filter_by(
-            order_date=day).all(), self._get_month_dates(_month_number)))
+                order_date=day).all(), self._get_month_dates(_month_number)))
 
         orders[:] = [_parse_order(_order)
                      for _day_orders in orders for _order in _day_orders]
@@ -42,22 +42,29 @@ class MonthStats(View):
 
 
 class WeekMenu(View):
-
     def __init__(self):
         self.today = datetime.date.today() + datetime.timedelta(days=7)
+        if hasattr(g.user, 'id'):
+            self.head_user_id = g.user.id
+        else:
+            self.head_user_id = None
 
     def _get_week_dates(self):
         return map(lambda day: self.today + datetime.timedelta(days=(day - self.today.weekday())), range(0, 5))
 
-    # @auth_required
+    @auth_required
+    @restrict_users
     def dispatch_request(self, user_id=None):
         if user_id:
                 orders = list(map(lambda day: db_session.query(Order).filter_by(
                 order_date=day, user_id=user_id).all(), self._get_week_dates()))
         else:
-            orders = list(map(lambda day: db_session.query(Order).filter_by(
-                order_date=day).all(), self._get_week_dates()))
-
+            if self.head_user_id == 1:
+                orders = list(map(lambda day: db_session.query(Order).filter_by(
+                    order_date=day).all(), self._get_week_dates()))
+            else:
+                orders = list(map(lambda day: db_session.query(Order).filter_by(
+                    order_date=day, user_id=self.head_user_id).all(), self._get_week_dates()))
 
         orders[:] = [_parse_order(_order)
                      for _day_orders in orders for _order in _day_orders]
@@ -66,7 +73,8 @@ class WeekMenu(View):
 
 month_stats = MonthStats.as_view('month_stats')
 bp_stats.add_url_rule('/month', view_func=month_stats)
-bp_stats.add_url_rule('/month/<int:month_number>/<int:user_id>', view_func=month_stats)
+bp_stats.add_url_rule(
+    '/month/<int:month_number>/<int:user_id>', view_func=month_stats)
 
 week_menu = WeekMenu.as_view('week_menu')
 bp_stats.add_url_rule('/week', view_func=week_menu)

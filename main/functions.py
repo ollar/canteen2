@@ -35,6 +35,8 @@ def _parse_meal(meal_obj, *args, **kwargs):
         'description': meal_obj.description,
         'category': meal_obj.category,
         'day_linked': meal_obj.day_linked,
+        'source_price': meal_obj.source_price,
+        'price': meal_obj.price,
         'enabled': meal_obj.enabled,
         'timestamp_created': meal_obj.timestamp_created,
         'timestamp_modified': meal_obj.timestamp_modified

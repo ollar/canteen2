@@ -32,6 +32,8 @@ class MealAPI(MethodView):
                         description=self.json.get('description'),
                         category=self.json.get('category'),
                         day_linked=self.json.get('day_linked'),
+                        source_price=self.json.get('source_price'),
+                        price=self.json.get('price'),
                         enabled=self.json.get('enabled'),
                         timestamp_modified=datetime.datetime.utcnow())
 
