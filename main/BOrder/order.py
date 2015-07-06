@@ -28,7 +28,8 @@ class Order_API(MethodView):
 
     @staticmethod
     def _check_actual_date(check_date):
-        return check_date in range(datetime.date.today().timetuple().tm_yday, datetime.date.today().timetuple().tm_yday + 8)
+        """ Makes orders editable from today to two weeks further."""
+        return check_date in range(datetime.date.today().timetuple().tm_yday, datetime.date.today().timetuple().tm_yday + 12)
 
     @auth_required
     @restrict_users
