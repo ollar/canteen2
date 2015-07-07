@@ -22,6 +22,12 @@ class MonthStats(View):
         else:
             self.head_user_id = None
 
+        self.user_id = request.args.get('user_id')
+        if request.args.get('month_number'):
+            self.month_number = int( request.args.get('month_number') )
+        else:
+            self.month_number = None
+
     def _get_month_length(self, month_number):
         return calendar.monthrange(self.today.year, month_number)[1]
 
@@ -29,14 +35,16 @@ class MonthStats(View):
         return map(lambda day: datetime.date(self.today.year, _month_number, day), range(1, self._get_month_length(_month_number) + 1))
 
     @auth_required
-    def dispatch_request(self, user_id, month_number=None):
-        _month_number = month_number
-        if not month_number:
+    def dispatch_request(self):
+        if int(self.user_id) != self.head_user_id and self.head_user_id != 1:
+            return make_response(jsonify({'type': 'error', 'text': 'Access denied'}), 403)
+        _month_number = self.month_number
+        if not self.month_number:
             _month_number = self.this_month
 
-        if user_id:
+        if self.user_id:
             orders = list(map(lambda day: db_session.query(Order).filter_by(
-                order_date=day, user_id=user_id).all(), self._get_month_dates(_month_number)))
+                order_date=day, user_id=self.user_id).all(), self._get_month_dates(_month_number)))
         else:
             if self.head_user_id == 1:
                 orders = list(map(lambda day: db_session.query(Order).filter_by(
@@ -60,16 +68,20 @@ class WeekMenu(View):
             self.head_user_id = g.user.id
         else:
             self.head_user_id = None
+        self.user_id = request.args.get('user_id')
+        if self.user_id:
+            self.user_id = int(self.user_id)
 
     def _get_week_dates(self):
         return map(lambda day: self.today + datetime.timedelta(days=(day - self.today.weekday())), range(0, 5))
 
     @auth_required
-    @restrict_users
-    def dispatch_request(self, user_id=None):
-        if user_id:
+    def dispatch_request(self):
+        if self.user_id != self.head_user_id and self.head_user_id != 1:
+            return make_response(jsonify({'type': 'error', 'text': 'Access denied'}), 403)
+        if self.user_id:
             orders = list(map(lambda day: db_session.query(Order).filter_by(
-                order_date=day, user_id=user_id).all(), self._get_week_dates()))
+                order_date=day, user_id=self.user_id).all(), self._get_week_dates()))
         else:
             if self.head_user_id == 1:
                 orders = list(map(lambda day: db_session.query(Order).filter_by(
@@ -84,10 +96,7 @@ class WeekMenu(View):
 
 
 month_stats = MonthStats.as_view('month_stats')
-bp_stats.add_url_rule('/month/<int:user_id>', view_func=month_stats)
-bp_stats.add_url_rule(
-    '/month/<int:user_id>/<int:month_number>', view_func=month_stats)
+bp_stats.add_url_rule('/month', view_func=month_stats)
 
 week_menu = WeekMenu.as_view('week_menu')
 bp_stats.add_url_rule('/week', view_func=week_menu)
-bp_stats.add_url_rule('/week/<int:user_id>', view_func=week_menu)
