@@ -17,14 +17,19 @@ class MonthStats(View):
         self.today = datetime.date.today()
         self.this_month = self.today.month
 
+        if hasattr(g.user, 'id'):
+            self.head_user_id = g.user.id
+        else:
+            self.head_user_id = None
+
     def _get_month_length(self, month_number):
         return calendar.monthrange(self.today.year, month_number)[1]
 
     def _get_month_dates(self, _month_number):
         return map(lambda day: datetime.date(self.today.year, _month_number, day), range(1, self._get_month_length(_month_number) + 1))
 
-    # @auth_required
-    def dispatch_request(self, month_number=None, user_id=None):
+    @auth_required
+    def dispatch_request(self, user_id, month_number=None):
         _month_number = month_number
         if not month_number:
             _month_number = self.this_month
@@ -33,8 +38,14 @@ class MonthStats(View):
             orders = list(map(lambda day: db_session.query(Order).filter_by(
                 order_date=day, user_id=user_id).all(), self._get_month_dates(_month_number)))
         else:
-            orders = list(map(lambda day: db_session.query(Order).filter_by(
-                order_date=day).all(), self._get_month_dates(_month_number)))
+            if self.head_user_id == 1:
+                orders = list(map(lambda day: db_session.query(Order).filter_by(
+                    order_date=day).all(), self._get_month_dates(_month_number)))
+            else:
+                orders = list(map(lambda day: db_session.query(Order).filter_by(
+                    order_date=day, user_id=self.head_user_id).all(), self._get_month_dates(_month_number)))
+
+
 
         orders[:] = [_parse_order(_order)
                      for _day_orders in orders for _order in _day_orders]
@@ -42,6 +53,7 @@ class MonthStats(View):
 
 
 class WeekMenu(View):
+
     def __init__(self):
         self.today = datetime.date.today() + datetime.timedelta(days=7)
         if hasattr(g.user, 'id'):
@@ -56,7 +68,7 @@ class WeekMenu(View):
     @restrict_users
     def dispatch_request(self, user_id=None):
         if user_id:
-                orders = list(map(lambda day: db_session.query(Order).filter_by(
+            orders = list(map(lambda day: db_session.query(Order).filter_by(
                 order_date=day, user_id=user_id).all(), self._get_week_dates()))
         else:
             if self.head_user_id == 1:
@@ -72,9 +84,9 @@ class WeekMenu(View):
 
 
 month_stats = MonthStats.as_view('month_stats')
-bp_stats.add_url_rule('/month', view_func=month_stats)
+bp_stats.add_url_rule('/month/<int:user_id>', view_func=month_stats)
 bp_stats.add_url_rule(
-    '/month/<int:month_number>/<int:user_id>', view_func=month_stats)
+    '/month/<int:user_id>/<int:month_number>', view_func=month_stats)
 
 week_menu = WeekMenu.as_view('week_menu')
 bp_stats.add_url_rule('/week', view_func=week_menu)
