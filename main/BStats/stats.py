@@ -23,6 +23,9 @@ class MonthStats(View):
             self.head_user_id = None
 
         self.user_id = request.args.get('user_id')
+        if self.user_id:
+            self.user_id = int(self.user_id)
+
         if request.args.get('month_number'):
             self.month_number = int( request.args.get('month_number') )
         else:
@@ -36,8 +39,12 @@ class MonthStats(View):
 
     @auth_required
     def dispatch_request(self):
-        if int(self.user_id) != self.head_user_id and self.head_user_id != 1:
+        if self.month_number and self.month_number not in range(1,13):
+            return make_response(jsonify({'type': 'error', 'text': 'Wrong month number'}), 401)
+
+        if self.user_id != self.head_user_id and self.head_user_id != 1:
             return make_response(jsonify({'type': 'error', 'text': 'Access denied'}), 403)
+
         _month_number = self.month_number
         if not self.month_number:
             _month_number = self.this_month
