@@ -104,9 +104,8 @@ class NextWeekMenu(View):
 
     # @auth_required
     def dispatch_request(self):
-        meals = list(self.run_week())
-        meals[:] = [_parse_meal(meal, order_date=str(date))
-                    for day_meals, date in meals for meal in day_meals]
+        meals = [_parse_meal(meal, order_date=str(date))
+                    for day_meals, date in self.run_week() for meal in day_meals]
         return jsonify({'meals': meals})
 
 home_page = NextWeekMenu.as_view('home')
