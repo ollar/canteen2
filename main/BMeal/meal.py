@@ -50,8 +50,12 @@ class MealAPI(MethodView):
             'description': self.json.get('description'),
             'category': self.json.get('category'),
             'day_linked': self.json.get('day_linked'),
-            'enabled': self.json.get('enabled')
+            'enabled': self.json.get('enabled'),
+            'source_price': self.json.get('source_price'),
+            'price': self.json.get('price')
         }
+
+        print(self.json.get('source_price'))
 
         json_dict.update({'timestamp_modified': datetime.datetime.utcnow()})
 
