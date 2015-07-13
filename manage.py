@@ -66,10 +66,8 @@ class PopulateMeals(Command):
                                 timestamp_modified=datetime.datetime.utcnow())
 
                 db_session.add(new_meal)
-                db_session.commit()
-
                 print('Created meal:', new_meal)
-
+            db_session.commit()
 
 
 class PopulateUsers(Command):
@@ -92,9 +90,9 @@ class PopulateUsers(Command):
                             password=word)
 
             db_session.add(new_user)
-            db_session.commit()
-
             print('Created user:', new_user)
+        db_session.commit()
+
 
 
 class PopulateOrders(Command):
@@ -105,35 +103,36 @@ class PopulateOrders(Command):
         Option('--number', '-n', dest='num', default=200),
     )
     def __init__(self):
-            self.users = db_session.query(User).all()
-            self.meals = db_session.query(Meal).all()
+        self.users = db_session.query(User).all()
+        self.meals = db_session.query(Meal).all()
+        self.today = datetime.datetime.today()
+
+    def _get_month_dates(self, num):
+        start = datetime.date(self.today.year, self.today.month - 4, 1)
+
+        for day in (start + datetime.timedelta(n) for n in range(num)):
+            if day.weekday() in range(0,5):
+                yield day
+
 
     def _get_day_meals(self, order_date):
-        _meals = [meal for meal in self.meals if meal.day_linked == order_date.weekday()]
-
-        if not _meals:
-            return self._get_day_meals(order_date + datetime.timedelta(days=1))
-
-        return _meals
-
+        return [meal for meal in self.meals if meal.day_linked == order_date.weekday()]
 
     def run(self, num):
         for user in self.users:
-            for i in range(num):
-                order_date = datetime.date.today() + datetime.timedelta(days=random.randint(-100,20))
+            for date in self._get_month_dates(num):
+                _meals = self._get_day_meals(date)
 
-                _meals = self._get_day_meals(order_date)
+                for _m in _meals:
+                    new_order = Order(order_date=date,
+                                      meal_id=_m.id,
+                                      user_id=user.id,
+                                      quantity=random.randint(1,10))
 
-                new_order = Order(order_date=order_date,
-                                  meal_id=random.choice(_meals).id,
-                                  user_id=user.id,
-                                  quantity=random.randint(1,10))
-
-                db_session.add(new_order)
-                db_session.commit()
-
-                print('Created order:', new_order)
-
+                    db_session.add(new_order)
+            print('Created order:', new_order)
+        db_session.commit()
+        print("Orders creation complete")
 
 
 manager.add_command('hello', Hello)
