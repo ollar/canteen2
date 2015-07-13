@@ -1,0 +1,158 @@
+[{
+  "title": "Monday first",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id sunt aliquam odio sint laborum illo sequi totam architecto adipisci, maxime atque assumenda quas, quod placeat ducimus eius nemo ipsum cupiditate.",
+  "enabled": true,
+  "category": 0,
+  "day_linked": 0,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Monday second",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita fuga porro consequatur deleniti, at enim aliquam tenetur, quod sequi dolorum cumque distinctio, quae consequuntur cum provident voluptatibus praesentium quidem hic?.",
+  "enabled": true,
+  "category": 1,
+  "day_linked": 0,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Monday third",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolor omnis aperiam maiores, praesentium dolore, voluptate delectus quasi! Enim placeat nemo adipisci pariatur ea sed accusamus quia cum. Id, odio.",
+  "enabled": true,
+  "category": 2,
+  "day_linked": 0,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Monday forth",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium nostrum quae soluta vel optio totam dicta, magni facere ipsam iste deserunt omnis sequi commodi ullam reiciendis maxime aliquid iusto dolor.",
+  "enabled": true,
+  "category": 3,
+  "day_linked": 0,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Tuesday first",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus, recusandae inventore consequatur reprehenderit quam aut id repudiandae sapiente doloribus illum magnam enim quia autem cum incidunt quae. Sint, repellendus, veritatis.",
+  "enabled": true,
+  "category": 0,
+  "day_linked": 1,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Tuesday second",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores sed omnis voluptatibus iusto quis eos, repellat illo commodi alias voluptates tenetur id animi. Nulla doloribus sit libero dignissimos magnam ad.",
+  "enabled": true,
+  "category": 1,
+  "day_linked": 1,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Tuesday third",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad laboriosam accusantium nulla eius, aspernatur dolores pariatur, impedit illum veritatis sed maiores quam totam molestiae a fugit? Voluptates at earum cum.",
+  "enabled": true,
+  "category": 2,
+  "day_linked": 1,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Tuesday forth",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo mollitia aliquam hic atque quidem nemo minus eos magnam nam, esse fuga itaque pariatur, iste maxime asperiores! Ab quae, eos ipsum?",
+  "enabled": true,
+  "category": 3,
+  "day_linked": 1,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Wednesday first",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora ea enim iure ipsam natus impedit, earum facilis in unde exercitationem provident dignissimos aliquam fugiat, non excepturi, possimus a. Dignissimos, molestiae.",
+  "enabled": true,
+  "category": 0,
+  "day_linked": 2,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Wednesday second",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi odio quam autem nulla dolorem facere dolore reiciendis recusandae maxime iusto, illum voluptatum nemo itaque asperiores veritatis quasi dignissimos. Repellendus, veniam.",
+  "enabled": true,
+  "category": 1,
+  "day_linked": 2,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Wednesday third",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error animi qui laudantium nobis totam enim reprehenderit officia vero repellendus quisquam facere illo impedit perferendis dolorum ea, quo cumque nostrum a.",
+  "enabled": true,
+  "category": 2,
+  "day_linked": 2,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Wednesday forth",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur obcaecati voluptatibus repellat recusandae, aliquid nobis libero distinctio accusantium reiciendis, ex quis sint earum. Quos, necessitatibus aliquid earum vero inventore, error.",
+  "enabled": true,
+  "category": 3,
+  "day_linked": 2,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Thursday first",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi id, et voluptatibus cum ab aliquam similique libero consequuntur? Reiciendis voluptatem, quod odit similique voluptates culpa enim ex nihil, impedit alias.",
+  "enabled": true,
+  "category": 0,
+  "day_linked": 3,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Thursday second",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat non iusto similique magni hic libero dolorum qui repudiandae nobis ex laborum velit fugit, reprehenderit facilis placeat iste obcaecati ut tempore.",
+  "enabled": true,
+  "category": 1,
+  "day_linked": 3,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Thursday third",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem expedita sunt facere at consectetur, accusantium aliquam velit sed consequatur officia architecto tempore dignissimos temporibus nobis ratione. Corporis earum, repellendus nesciunt.",
+  "category": 2,
+  "day_linked": 3,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Thursday forth",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque quisquam, vel libero ducimus soluta quibusdam nam eum esse sit aliquid numquam, quas, sunt totam mollitia eos, cumque eius consequatur atque?",
+  "category": 3,
+  "day_linked": 3,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Friday first",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi aperiam asperiores nostrum unde maxime, voluptate modi impedit nihil quas labore ad, temporibus dolores deleniti cupiditate ipsa, velit, quos. Laborum, rerum.",
+  "category": 0,
+  "day_linked": 4,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Friday second",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur magni distinctio sed rem? Aliquid quod nulla, nobis voluptatem non quisquam optio natus eum illum neque dolorum temporibus rerum soluta quasi.",
+  "enabled": true,
+  "category": 1,
+  "day_linked": 4,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Friday third",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem eaque temporibus amet architecto recusandae. Nulla ex, obcaecati impedit accusantium perspiciatis dolores consequatur odit pariatur quaerat ad repellat illum praesentium hic.",
+  "enabled": true,
+  "category": 2,
+  "day_linked": 4,
+  "source_price": 20,
+  "price": 50
+}, {
+  "title": "Friday forth",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea amet soluta adipisci aut sunt atque debitis nisi quas accusamus, molestias. Ipsum illo molestiae harum laborum iure maiores aspernatur itaque asperiores!",
+  "enabled": true,
+  "category": 3,
+  "day_linked": 4,
+  "source_price": 20,
+  "price": 50
+}]
