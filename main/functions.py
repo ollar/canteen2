@@ -23,7 +23,7 @@ def _parse_user(user_obj, detailed=True):
     }
     if detailed:
         user.update(
-            {'orders': [_parse_order(order, detailed=False) for order in user_obj.orders]})
+            {'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 35]})
 
     return user
 
