@@ -18,29 +18,34 @@ def _parse_user(user_obj, detailed=True):
         'real_name': user_obj.real_name,
         'username': user_obj.username,
         # 'password': user_obj.password,
-        'timestamp_created': str(user_obj.timestamp_created),
-        'timestamp_modified': str(user_obj.timestamp_modified),
     }
     if detailed:
-        user.update(
-            {'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 35]})
+        user.update({
+            'timestamp_created': str(user_obj.timestamp_created),
+            'timestamp_modified': str(user_obj.timestamp_modified),
+            'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 35]
+        })
 
     return user
 
 
-def _parse_meal(meal_obj, *args, **kwargs):
+def _parse_meal(meal_obj, detailed=True, *args, **kwargs):
     meal = {
         'id': meal_obj.id,
         'title': meal_obj.title,
-        'description': meal_obj.description,
         'category': meal_obj.category,
         'day_linked': meal_obj.day_linked,
         'source_price': meal_obj.source_price,
         'price': meal_obj.price,
-        'enabled': meal_obj.enabled,
-        'timestamp_created': meal_obj.timestamp_created,
-        'timestamp_modified': meal_obj.timestamp_modified
     }
+
+    if detailed:
+        meal.update({
+            'description': meal_obj.description,
+            'enabled': meal_obj.enabled,
+            'timestamp_created': meal_obj.timestamp_created,
+            'timestamp_modified': meal_obj.timestamp_modified
+        })
 
     meal.update(kwargs)
 
@@ -54,14 +59,14 @@ def _parse_order(order_obj, detailed=True):
         'order_date': str(order_obj.order_date),
         'meal_id': order_obj.meal_id,
         'quantity': order_obj.quantity,
-        'timestamp_created': str(order_obj.timestamp_created),
-        'timestamp_modified': str(order_obj.timestamp_modified),
     }
 
     if detailed:
         order.update({
+            'timestamp_created': str(order_obj.timestamp_created),
+            'timestamp_modified': str(order_obj.timestamp_modified),
             'user': _parse_user(order_obj.user, detailed=False),
-            'meal': _parse_meal(order_obj.meal)
+            'meal': _parse_meal(order_obj.meal, detailed=False)
         })
     return order
 
