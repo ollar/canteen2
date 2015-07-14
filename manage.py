@@ -105,12 +105,10 @@ class PopulateOrders(Command):
     def __init__(self):
         self.users = db_session.query(User).all()
         self.meals = db_session.query(Meal).all()
-        self.today = datetime.datetime.today()
+        self.today = datetime.date.today()
 
     def _get_month_dates(self, num):
-        start = datetime.date(self.today.year, self.today.month - 4, 1)
-
-        for day in (start + datetime.timedelta(n) for n in range(num)):
+        for day in ((self.today + datetime.timedelta(14)) - datetime.timedelta(days=n) for n in range(num)):
             if day.weekday() in range(0,5):
                 yield day
 
@@ -130,8 +128,8 @@ class PopulateOrders(Command):
                                       quantity=random.randint(1,10))
 
                     db_session.add(new_order)
-            print('Created order:', new_order)
-        db_session.commit()
+            print('Created orders for:', user)
+            db_session.commit()
         print("Orders creation complete")
 
 
