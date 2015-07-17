@@ -23,7 +23,7 @@ def _parse_user(user_obj, detailed=True):
         user.update({
             'timestamp_created': str(user_obj.timestamp_created),
             'timestamp_modified': str(user_obj.timestamp_modified),
-            'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 35]
+            'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 50]
         })
 
     return user
