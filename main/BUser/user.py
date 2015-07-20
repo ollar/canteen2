@@ -33,9 +33,9 @@ class UserAPI(MethodView):
         assert self.json.get('username'), 'username is required'
         assert self.json.get('password'), 'password is required'
 
-        new_user = User(real_name=self.json.get('real_name'),
-                        username=self.json.get('username'),
-                        password=self.json.get('password'))
+        new_user = User(real_name=self.json.get('real_name').strip(),
+                        username=self.json.get('username').strip(),
+                        password=self.json.get('password').strip())
 
         db_session.add(new_user)
         try:
@@ -81,10 +81,10 @@ class UserAPI(MethodView):
 def login():
     json = request.json
     user = db_session.query(User).filter_by(
-        username=json.get('username')).first()
+        username=json.get('username').strip()).first()
     if not user:
         return make_response(jsonify({'type': 'error', 'text': 'no users with such username'}), 401)
-    elif check_password_hash(user.password, json.get('password')):
+    elif check_password_hash(user.password, json.get('password').strip()):
         token = {}
         tokens = db_session.query(Token).filter_by(user_id=user.id).all()
         is_expired_list = list(map(lambda t: t.is_expired(), tokens))

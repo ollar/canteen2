@@ -23,7 +23,8 @@ def _parse_user(user_obj, detailed=True):
         user.update({
             'timestamp_created': str(user_obj.timestamp_created),
             'timestamp_modified': str(user_obj.timestamp_modified),
-            'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 50]
+            'orders': [_parse_order(order, detailed=False) for (key, order) in enumerate(user_obj.orders) if key < 50],
+            'comments': [_parse_comment(comment, detailed=False) for (key, comment) in enumerate(user_obj.comments) if key < 50]
         })
 
     return user
@@ -44,7 +45,8 @@ def _parse_meal(meal_obj, detailed=True, *args, **kwargs):
             'description': meal_obj.description,
             'enabled': meal_obj.enabled,
             'timestamp_created': meal_obj.timestamp_created,
-            'timestamp_modified': meal_obj.timestamp_modified
+            'timestamp_modified': meal_obj.timestamp_modified,
+            'comments': [_parse_comment(comment, detailed=False) for (key, comment) in enumerate(meal_obj.comments) if key < 50]
         })
 
     meal.update(kwargs)
@@ -69,6 +71,23 @@ def _parse_order(order_obj, detailed=True):
             'meal': _parse_meal(order_obj.meal, detailed=False)
         })
     return order
+
+
+def _parse_comment(comment_obj, detailed=True):
+    comment = {
+        'id': comment_obj.id,
+        'user_id': comment_obj.user_id,
+        'meal_id': comment_obj.meal_id,
+        'content': comment_obj.content
+    }
+
+    if detailed:
+        comment.update({
+            'timestamp_created': str(comment_obj.timestamp_created),
+            'timestamp_modified': str(comment_obj.timestamp_modified),
+        })
+
+    return comment
 
 
 def auth_required(f, *args, **kwargs):

@@ -34,8 +34,7 @@ class MealAPI(MethodView):
                         day_linked=self.json.get('day_linked'),
                         source_price=self.json.get('source_price'),
                         price=self.json.get('price'),
-                        enabled=self.json.get('enabled'),
-                        timestamp_modified=datetime.datetime.utcnow())
+                        enabled=self.json.get('enabled'))
 
         db_session.add(new_meal)
         db_session.commit()
