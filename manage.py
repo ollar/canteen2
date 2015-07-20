@@ -2,6 +2,7 @@ from flask.ext.script import Manager, Command, Option
 from main.main import app
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import ProgrammingError
 from main.database import Base, db_session
 from main.Flask_configs import Config, DevConfig
 from main.models import User, Order, Meal
@@ -139,7 +140,7 @@ class PopulateComments(Command):
     Creates fake comments.
     """
     option_list = (
-        Option('--number', '-n', dest='num', default=200),
+        Option('--number', '-n', dest='num', default=20),
     )
     def __init__(self):
         self.users = db_session.query(User).all()
@@ -170,10 +171,13 @@ class PopulateComments(Command):
 
 manager.add_command('hello', Hello)
 manager.add_command('update_db', InitDB)
-manager.add_command('popme', PopulateMeals)
-manager.add_command('popus', PopulateUsers)
-manager.add_command('popor', PopulateOrders)
-manager.add_command('popco', PopulateComments)
+try:
+    manager.add_command('popme', PopulateMeals)
+    manager.add_command('popus', PopulateUsers)
+    manager.add_command('popor', PopulateOrders)
+    manager.add_command('popco', PopulateComments)
+except ProgrammingError:
+    pass
 
 if __name__ == '__main__':
     manager.run()
