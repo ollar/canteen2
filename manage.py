@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from main.database import Base, db_session
 from main.Flask_configs import Config, DevConfig
 from main.models import User, Order, Meal
+from main.BComment.models import Comment
 import random
 import requests
 import datetime
@@ -133,11 +134,46 @@ class PopulateOrders(Command):
         print("Orders creation complete")
 
 
+class PopulateComments(Command):
+    """
+    Creates fake orders.
+    """
+    option_list = (
+        Option('--number', '-n', dest='num', default=200),
+    )
+    def __init__(self):
+        self.users = db_session.query(User).all()
+        self.meals = db_session.query(Meal).all()
+        self.today = datetime.date.today()
+
+    def _compose_comment(self, num):
+        text = []
+        with open('./words', 'r') as f:
+            word = f.read().splitlines()
+            for i in range(num):
+                text.append(random.choice(word))
+
+        return ' '.join(text)
+
+    def run(self, num):
+        for user in self.users:
+            for meal in self.meals:
+                new_comment = Comment(meal_id=meal.id,
+                                      user_id=user.id,
+                                      content=self._compose_comment(num))
+
+                db_session.add(new_comment)
+            print('Created comments for:', user)
+            db_session.commit()
+        print("Comments creation complete")
+
+
 manager.add_command('hello', Hello)
 manager.add_command('update_db', InitDB)
 manager.add_command('popme', PopulateMeals)
 manager.add_command('popus', PopulateUsers)
 manager.add_command('popor', PopulateOrders)
+manager.add_command('popco', PopulateComments)
 
 if __name__ == '__main__':
     manager.run()
