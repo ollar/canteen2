@@ -136,7 +136,7 @@ class PopulateOrders(Command):
 
 class PopulateComments(Command):
     """
-    Creates fake orders.
+    Creates fake comments.
     """
     option_list = (
         Option('--number', '-n', dest='num', default=200),
