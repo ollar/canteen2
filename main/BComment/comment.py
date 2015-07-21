@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort, make_response,g
+from flask import Blueprint, jsonify, request, abort, make_response, g
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError, StatementError
 from main.database import db_session
@@ -10,6 +10,7 @@ bp_comment = Blueprint('bp_comment', __name__, url_prefix='/comment')
 
 
 class CommentApi(MethodView):
+
     def __init__(self):
         self.json = request.json
 
@@ -23,6 +24,7 @@ class CommentApi(MethodView):
 
         comments = db_session.query(Comment).all()
         comments[:] = [_parse_comment(comment) for comment in comments]
+
         return jsonify({'comments': comments})
 
     def post(self):
@@ -40,7 +42,7 @@ class CommentApi(MethodView):
         if comment:
             db_session.delete(comment)
             db_session.commit()
-            return jsonify(_parse_meal(comment))
+            return jsonify({'type': 'message', 'text': 'success'})
         return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 
