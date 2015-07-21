@@ -35,14 +35,14 @@ class CommentApi(MethodView):
         db_session.add(new_comment)
         db_session.commit()
 
-        return jsonify(_parse_comment(new_comment))
+        return jsonify(_parse_comment(new_comment, detailed=False))
 
     def delete(self, comment_id):
         comment = db_session.query(Comment).get(comment_id)
         if comment:
             db_session.delete(comment)
             db_session.commit()
-            return jsonify({'type': 'message', 'text': 'success'})
+            return jsonify(_parse_comment(comment, detailed=False))
         return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 

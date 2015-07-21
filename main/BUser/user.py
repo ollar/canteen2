@@ -73,7 +73,7 @@ class UserAPI(MethodView):
         if user:
             db_session.delete(user)
             db_session.commit()
-            return jsonify(_parse_user(user))
+            return jsonify(_parse_user(user, detailed=False))
         return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 
