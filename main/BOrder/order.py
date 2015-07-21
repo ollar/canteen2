@@ -76,7 +76,7 @@ class Order_API(MethodView):
                 return make_response(jsonify({'type': 'error', 'text': 'You are trying to remove old order. That is not allowed'}), 403)
             db_session.delete(order)
             db_session.commit()
-            return jsonify({'status': 'success'})
+            return jsonify(_parse_order(order, detailed=False))
         return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 register_api(Order_API, 'order_api', '/order/', pk='order_id')

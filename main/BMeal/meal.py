@@ -72,7 +72,7 @@ class MealAPI(MethodView):
         if meal:
             db_session.delete(meal)
             db_session.commit()
-            return jsonify(_parse_meal(meal))
+            return jsonify(_parse_meal(meal, detailed=False))
         return make_response(jsonify({'type': 'error', 'text': 'not found'}), 404)
 
 register_api(MealAPI, 'meal_api', '/meal/', pk='meal_id')
