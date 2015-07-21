@@ -85,6 +85,8 @@ def _parse_comment(comment_obj, detailed=True):
         comment.update({
             'timestamp_created': str(comment_obj.timestamp_created),
             'timestamp_modified': str(comment_obj.timestamp_modified),
+            'user': _parse_user(comment_obj.user, detailed=False),
+            'meal': _parse_meal(comment_obj.meals, detailed=False)
         })
 
     return comment
