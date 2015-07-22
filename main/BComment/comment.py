@@ -28,6 +28,10 @@ class CommentApi(MethodView):
         return jsonify({'comments': comments})
 
     def post(self):
+        check_comment = db_session.query(Comment).filter_by(
+            user_id=g.user.id, meal_id=self.json.get('meal_id')).first()
+        if check_comment:
+            return make_response(jsonify({'type': 'error', 'text': 'you have already commented this meal'}))
         new_comment = Comment(user_id=g.user.id,
                               meal_id=self.json.get('meal_id'),
                               content=self.json.get('content', ''))

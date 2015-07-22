@@ -1,7 +1,7 @@
 from main.main import app
 from flask import make_response, jsonify, g
 from functools import wraps
-
+import datetime
 
 def register_api(view, endpoint, url, pk='id', pk_type='int'):
     view_func = view.as_view(endpoint)
@@ -31,6 +31,7 @@ def _parse_user(user_obj, detailed=True):
 
 
 def _parse_meal(meal_obj, detailed=True, *args, **kwargs):
+    this_month = datetime.datetime.today().month
     meal = {
         'id': meal_obj.id,
         'title': meal_obj.title,
@@ -46,7 +47,7 @@ def _parse_meal(meal_obj, detailed=True, *args, **kwargs):
             'enabled': meal_obj.enabled,
             'timestamp_created': meal_obj.timestamp_created,
             'timestamp_modified': meal_obj.timestamp_modified,
-            'comments': [_parse_comment(comment, detailed=False) for (key, comment) in enumerate(meal_obj.comments) if key < 50]
+            'comments': [_parse_comment(comment, detailed=False) for comment in meal_obj.comments if comment.timestamp_modified.month == this_month]
         })
 
     meal.update(kwargs)
