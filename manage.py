@@ -89,7 +89,8 @@ class PopulateUsers(Command):
 
             new_user = User(real_name=word,
                             username=word,
-                            password=word)
+                            password=word,
+                            email=word+'@gmail.com')
 
             db_session.add(new_user)
             print('Created user:', new_user)

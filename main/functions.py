@@ -17,6 +17,7 @@ def _parse_user(user_obj, detailed=True):
         'id': user_obj.id,
         'real_name': user_obj.real_name,
         'username': user_obj.username,
+        'email': user_obj.email,
         # 'password': user_obj.password,
     }
     if detailed:
