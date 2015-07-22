@@ -14,16 +14,18 @@ class User(Base, UserMixin):
     real_name = Column(String)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    email = Column(String, nullable=False)
     timestamp_created = Column(
         DateTime, nullable=False, default=datetime.datetime.utcnow())
     timestamp_modified = Column(DateTime)
 
     orders = relationship('Order', backref='user')
 
-    def __init__(self, username, password, real_name=""):
+    def __init__(self, username, password, email, real_name=""):
         self.real_name = real_name
         self.username = username
         self.password = generate_password_hash(str(password).encode())
+        self.email = email
         self.timestamp_modified = datetime.datetime.utcnow()
 
     def __repr__(self):

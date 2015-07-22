@@ -35,7 +35,8 @@ class UserAPI(MethodView):
 
         new_user = User(real_name=self.json.get('real_name').strip(),
                         username=self.json.get('username').strip(),
-                        password=self.json.get('password').strip())
+                        password=self.json.get('password').strip(),
+                        email=self.json.get('email').strip().lower())
 
         db_session.add(new_user)
         try:
@@ -50,7 +51,8 @@ class UserAPI(MethodView):
     def put(self, user_id):
         json_dict = {
             'real_name': self.json.get('real_name'),
-            'username': self.json.get('username')
+            'username': self.json.get('username'),
+            'email': self.json.get('email')
         }
 
         if self.json.get('password'):
