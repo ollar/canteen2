@@ -54,8 +54,6 @@ class MealAPI(MethodView):
             'price': self.json.get('price')
         }
 
-        print(self.json.get('source_price'))
-
         json_dict.update({'timestamp_modified': datetime.datetime.utcnow()})
 
         update_meal = db_session.query(Meal).filter_by(id=meal_id)
