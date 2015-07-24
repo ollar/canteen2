@@ -27,6 +27,7 @@ class MealAPI(MethodView):
         return jsonify({'meals': meals})
 
     @auth_required
+    @restrict_users
     def post(self):
         new_meal = Meal(title=self.json.get('title'),
                         description=self.json.get('description'),
