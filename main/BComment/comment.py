@@ -27,6 +27,7 @@ class CommentApi(MethodView):
 
         return jsonify({'comments': comments})
 
+    @auth_required
     def post(self):
         check_comment = db_session.query(Comment).filter_by(
             user_id=g.user.id, meal_id=self.json.get('meal_id')).first()
@@ -41,6 +42,7 @@ class CommentApi(MethodView):
 
         return jsonify(_parse_comment(new_comment, detailed=False))
 
+    @auth_required
     def delete(self, comment_id):
         comment = db_session.query(Comment).get(comment_id)
         if comment:
